@@ -40,3 +40,11 @@ npm run render                       # MP4
   `REMOTION_BROWSER_EXECUTABLE=/path/to/chrome-headless-shell npm run render`. `verify.sh` does this automatically using the one HyperFrames installs.
 - When crossfading clips from different renderers with `xfade`, normalize them first (`settb=AVTB,fps=30,format=yuv420p`); otherwise FFmpeg errors on mismatched timebases.
 - HyperFrames AI skills (`/hyperframes`, `/hyperframes-cli`, `/hyperframes-registry`, `/media-use`) are installed with `npx hyperframes skills update`.
+
+## Cortedoro
+
+- `cortedoro-reel/` — 15 s vertical brand reel (HyperFrames). `cd cortedoro-reel && npm run render`
+- `remotion-studio/src/cortedoro/` — square review template (Remotion). Add reviews to
+  `remotion-studio/cortedoro/recensioni.json` (`file`, `testo`, `autore`, `stelle`), then
+  `cd remotion-studio && npm run recensioni` renders one video per review into `renders/recensioni/`.
+  Duration grows with the text (min 10 s) and long reviews get a smaller font.
