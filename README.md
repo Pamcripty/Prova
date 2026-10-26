@@ -44,6 +44,7 @@ npm run render                       # MP4
 ## Cortedoro
 
 - `cortedoro-reel/` — 15 s vertical brand reel (HyperFrames). `cd cortedoro-reel && npm run render`
+- `cortedoro-evento/` — 12 s vertical event/offer announcement (HyperFrames); event name, date and time are placeholders in `index.html`. `cd cortedoro-evento && npm run render`
 - `remotion-studio/src/cortedoro/` — square review template (Remotion). Add reviews to
   `remotion-studio/cortedoro/recensioni.json` (`file`, `testo`, `autore`, `stelle`), then
   `cd remotion-studio && npm run recensioni` renders one video per review into `renders/recensioni/`.

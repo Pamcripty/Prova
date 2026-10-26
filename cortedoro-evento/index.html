@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap-3.14.2.min.js"></script>
+    <style>
+      :root {
+        --ground: #0b0906;
+        --ink: #f4ead2;
+        --gold-deep: #9c7426;
+        --gold: #d4a944;
+        --gold-light: #f7e3a1;
+        --font-display: "Playfair Display", serif;
+        --font-text: "EB Garamond", serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        font-family: var(--font-display);
+        color: var(--ink);
+      }
+
+      /* Sfondo */
+      #bg {
+        position: absolute;
+        inset: 0;
+        background: var(--ground);
+      }
+      #glow {
+        position: absolute;
+        left: 40px;
+        top: 180px;
+        width: 1000px;
+        height: 1000px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(212, 169, 68, 0.3) 0%, rgba(212, 169, 68, 0.08) 45%, rgba(0, 0, 0, 0) 70%);
+      }
+      #floor {
+        position: absolute;
+        left: 0;
+        top: 1180px;
+        width: 1080px;
+        height: 740px;
+        background: linear-gradient(180deg, rgba(212, 169, 68, 0) 0%, rgba(212, 169, 68, 0.1) 60%, rgba(156, 116, 38, 0.18) 100%);
+      }
+      #frame {
+        position: absolute;
+        left: 60px;
+        top: 200px;
+        width: 960px;
+        height: 1100px;
+        border: 2px solid rgba(212, 169, 68, 0.45);
+      }
+
+      /* Lampo dorato tra una scena e l'altra */
+      #wipe {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1920px;
+        pointer-events: none;
+      }
+      #wipe-bar {
+        position: absolute;
+        left: -900px;
+        top: -200px;
+        width: 260px;
+        height: 2400px;
+        background: linear-gradient(90deg, rgba(247, 227, 161, 0) 0%, rgba(247, 227, 161, 0.55) 50%, rgba(247, 227, 161, 0) 100%);
+        transform: rotate(14deg);
+      }
+
+      .scene {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 1080px;
+        height: 1920px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 670px;
+        text-align: center;
+      }
+      .gold-text {
+        background: linear-gradient(110deg, var(--gold-deep) 0%, var(--gold) 35%, var(--gold-light) 47%, #fffaf0 50%, var(--gold-light) 53%, var(--gold) 65%, var(--gold-deep) 100%);
+        background-size: 300% 100%;
+        background-position: 100% 0;
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .kicker {
+        font-family: var(--font-text);
+        font-size: 40px;
+        font-weight: 500;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: var(--gold);
+      }
+
+      /* 1. Hook */
+      #hook-top {
+        font-size: 150px;
+        font-weight: 700;
+        line-height: 1;
+        letter-spacing: 0.02em;
+      }
+      #hook-sub {
+        margin-top: 36px;
+      }
+
+      /* 2. Nome evento */
+      #ev-kicker {
+        margin-bottom: 30px;
+      }
+      #ev-name {
+        font-size: 150px;
+        font-weight: 700;
+        font-style: italic;
+        line-height: 1.02;
+      }
+      #ev-desc {
+        font-family: var(--font-text);
+        font-size: 50px;
+        color: var(--ink);
+        margin-top: 40px;
+      }
+
+      /* 3. Data con numero che scorre */
+      #date-day {
+        font-family: var(--font-text);
+        font-size: 56px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      #date-window {
+        height: 260px;
+        width: 420px;
+        overflow: hidden;
+        margin: 28px 0 14px;
+      }
+      #date-roll {
+        display: flex;
+        flex-direction: column;
+      }
+      .num {
+        height: 260px;
+        font-size: 250px;
+        font-weight: 700;
+        line-height: 260px;
+        font-variant-numeric: lining-nums tabular-nums;
+        color: var(--gold);
+      }
+      #date-month {
+        font-size: 84px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      #date-time {
+        font-family: var(--font-text);
+        font-size: 52px;
+        color: var(--ink);
+        margin-top: 26px;
+      }
+
+      /* 4. Urgenza */
+      #urg-title {
+        font-size: 120px;
+        font-weight: 700;
+        line-height: 1.05;
+      }
+      #urg-bar {
+        width: 640px;
+        height: 22px;
+        border: 2px solid var(--gold);
+        margin-top: 64px;
+        padding: 3px;
+      }
+      #urg-fill {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, var(--gold-deep), var(--gold-light));
+        transform-origin: left center;
+      }
+      #urg-note {
+        margin-top: 34px;
+      }
+
+      /* 5. CTA */
+      #cta-main {
+        font-size: 140px;
+        font-weight: 700;
+        line-height: 1.02;
+      }
+      #cta-btn {
+        margin-top: 60px;
+        padding: 26px 64px;
+        border: 3px solid var(--gold);
+        font-family: var(--font-text);
+        font-size: 52px;
+        font-weight: 500;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--ink);
+      }
+      #cta-brand {
+        font-size: 48px;
+        letter-spacing: 0.3em;
+        margin-top: 64px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="12"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="bg" class="clip" data-start="0" data-duration="12" data-track-index="0">
+        <div id="glow"></div>
+        <div id="floor"></div>
+        <div id="frame"></div>
+      </div>
+
+      <!-- 1. Hook: già leggibile al frame 0 -->
+      <div id="hook" class="clip scene" data-start="0" data-duration="2" data-track-index="1">
+        <div id="hook-top" class="gold-text">NOVITÀ</div>
+        <div id="hook-sub" class="kicker">da Cortedoro</div>
+      </div>
+
+      <!-- 2. Nome dell'evento (segnaposto) -->
+      <div id="evento" class="clip scene" data-start="2" data-duration="2.6" data-track-index="1">
+        <div id="ev-kicker" class="kicker">Vi aspetta</div>
+        <div id="ev-name" class="gold-text">Serata<br />d'Oro</div>
+        <div id="ev-desc">Cena e musica dal vivo</div>
+      </div>
+
+      <!-- 3. Data e ora (segnaposto) -->
+      <div id="data" class="clip scene" data-start="4.6" data-duration="2.8" data-track-index="1">
+        <div id="date-day">Sabato</div>
+        <div id="date-window" data-layout-allow-overflow>
+          <div id="date-roll">
+            <div class="num">01</div>
+            <div class="num">03</div>
+            <div class="num">05</div>
+            <div class="num">07</div>
+            <div class="num">09</div>
+            <div class="num">11</div>
+            <div class="num">12</div>
+            <div class="num">13</div>
+            <div class="num">14</div>
+          </div>
+        </div>
+        <div id="date-month" class="gold-text">Novembre</div>
+        <div id="date-time">ore 20:30</div>
+      </div>
+
+      <!-- 4. Urgenza -->
+      <div id="urgenza" class="clip scene" data-start="7.4" data-duration="2" data-track-index="1">
+        <div id="urg-title">Posti<br /><span class="gold-text">limitati</span></div>
+        <div id="urg-bar"><div id="urg-fill"></div></div>
+        <div id="urg-note" class="kicker">Non restare fuori</div>
+      </div>
+
+      <!-- 5. CTA: resta fino all'ultimo frame -->
+      <div id="cta" class="clip scene" data-start="9.4" data-duration="2.6" data-track-index="1">
+        <div id="cta-main" class="gold-text">Prenota<br />ora</div>
+        <div id="cta-btn">Link in bio</div>
+        <div id="cta-brand" class="gold-text">CORTEDORO</div>
+      </div>
+
+      <div id="wipe" class="clip" data-layout-allow-overflow data-start="0" data-duration="12" data-track-index="2">
+        <div id="wipe-bar"></div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const snap = "expo.out";
+      const shine = (sel, t, d = 1.1) =>
+        tl.fromTo(sel, { backgroundPosition: "100% 0" }, { backgroundPosition: "0% 0", duration: d, ease: "power2.inOut" }, t);
+      const exit = (sels, t) => tl.to(sels, { opacity: 0, y: -40, duration: 0.3, ease: "power2.in", stagger: 0.03 }, t);
+      const flash = (t) => tl.fromTo("#wipe-bar", { x: 0 }, { x: 2300, duration: 0.55, ease: "power2.inOut", immediateRender: false }, t);
+
+      // Sfondo: bagliore che pulsa a ogni scena
+      tl.fromTo("#frame", { opacity: 0.6, scale: 1.03 }, { opacity: 1, scale: 1, duration: 0.8, ease: snap }, 0);
+      tl.fromTo("#glow", { scale: 1.15, opacity: 1 }, { scale: 0.95, opacity: 0.7, duration: 1.6, ease: "power2.out" }, 0);
+      [2, 4.6, 7.4, 9.4].forEach((t) => {
+        tl.fromTo("#glow", { scale: 1.15, opacity: 1 }, { scale: 0.95, opacity: 0.7, duration: 1.6, ease: "power2.out", immediateRender: false }, t);
+      });
+      [1.75, 4.35, 7.15, 9.15].forEach(flash);
+
+      // 1. Hook
+      tl.fromTo("#hook-top", { scale: 1.12, opacity: 0.85 }, { scale: 1, opacity: 1, duration: 0.7, ease: snap }, 0);
+      shine("#hook-top", 0.2, 1.2);
+      tl.fromTo("#hook-sub", { opacity: 0.75, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: snap }, 0.35);
+      exit(["#hook-top", "#hook-sub"], 1.6);
+
+      // 2. Evento
+      tl.fromTo("#ev-kicker", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: snap }, 2.05);
+      tl.fromTo("#ev-name", { opacity: 0, scale: 0.86, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "back.out(1.6)" }, 2.15);
+      shine("#ev-name", 2.6);
+      tl.fromTo("#ev-desc", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: snap }, 2.7);
+      exit(["#ev-kicker", "#ev-name", "#ev-desc"], 4.2);
+
+      // 3. Data: il numero scorre fino al giorno dell'evento
+      tl.fromTo("#date-day", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: snap }, 4.65);
+      tl.fromTo("#date-window", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 4.7);
+      tl.fromTo("#date-roll", { y: 0 }, { y: -8 * 260, duration: 1.3, ease: "expo.out" }, 4.75);
+      tl.fromTo("#date-month", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: snap }, 5.3);
+      shine("#date-month", 5.6);
+      tl.fromTo("#date-time", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: snap }, 5.7);
+      exit(["#date-day", "#date-window", "#date-month", "#date-time"], 7);
+
+      // 4. Urgenza: la barra si riempie quasi del tutto
+      tl.fromTo("#urg-title", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, 7.45);
+      shine("#urg-title .gold-text", 7.7, 0.9);
+      tl.fromTo("#urg-bar", { opacity: 0 }, { opacity: 1, duration: 0.25 }, 7.6);
+      tl.fromTo("#urg-fill", { scaleX: 0 }, { scaleX: 0.88, duration: 1, ease: "power3.out" }, 7.7);
+      tl.fromTo("#urg-note", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.4, ease: snap }, 8.1);
+      exit(["#urg-title", "#urg-bar", "#urg-note"], 9.05);
+
+      // 5. CTA
+      tl.fromTo("#cta-main", { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 9.45);
+      shine("#cta-main", 9.8, 1.1);
+      tl.fromTo("#cta-btn", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: snap }, 9.7);
+      tl.fromTo("#cta-btn", { scale: 1 }, { scale: 1.06, duration: 0.35, ease: "sine.inOut", yoyo: true, repeat: 3 }, 10.3);
+      tl.fromTo("#cta-brand", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: snap }, 9.85);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
