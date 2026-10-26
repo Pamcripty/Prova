@@ -1,0 +1,12 @@
+{
+  "name": "prova-video-toolkit",
+  "private": true,
+  "description": "HyperFrames + Remotion + FFmpeg video toolkit",
+  "scripts": {
+    "verify": "./verify.sh",
+    "setup": "npm install && npm --prefix remotion-studio install && npx hyperframes browser ensure"
+  },
+  "devDependencies": {
+    "hyperframes": "0.8.203"
+  }
+}
